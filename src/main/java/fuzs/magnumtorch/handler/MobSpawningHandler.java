@@ -14,7 +14,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import java.util.stream.Stream;
 
 public class MobSpawningHandler {
-    public boolean onCheckSpawn(EntityType<?> entityType, LevelAccessor levelAccessor, double posX, double posY, double posZ, MobSpawnType spawnType) {
+    public boolean onLivingSpawn(EntityType<?> entityType, LevelAccessor levelAccessor, double posX, double posY, double posZ, MobSpawnType spawnType) {
         if (levelAccessor.isClientSide()) return true;
         PoiManager poiManager = ((ServerLevelAccessor) levelAccessor).getLevel().getPoiManager();
         BlockPos pos = new BlockPos(posX, posY, posZ);
