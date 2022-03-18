@@ -28,4 +28,12 @@ public abstract class VillagerMixin extends AbstractVillager {
             callbackInfo.setReturnValue(null);
         }
     }
+
+    @Inject(method = "trySpawnGolem", at = @At(value = "INVOKE", target = "net/minecraft/world/entity/EntityType", "create", "(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/network/chat/Component;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/MobSpawnType;ZZ)Lnet/minecraft/world/entity/Entity;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+    private void trySpawnGolem$invokeAddFreshEntityWithPassengers(ServerLevel serverLevel, CallbackInfoReturnable<IronGolem> callbackInfo, BlockPos blockPos, int index, double randomX, double randomZ, BlockPos blockPos2, IronGolem ironGolem) {
+        if (!LivingSpawnCallback.EVENT.invoker().onLivingSpawn(ironGolem, serverLevel, blockPos2.getX(), blockPos2.getY(), blockPos2.getZ(), MobSpawnType.MOB_SUMMONED)) {
+            ironGolem.discard();
+            callbackInfo.setReturnValue(null);
+        }
+    }
 }

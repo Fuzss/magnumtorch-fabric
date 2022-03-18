@@ -18,6 +18,7 @@ public abstract class VillageSiegeMixin {
     private void trySpawn$invokeAddFreshEntityWithPassengers(ServerLevel serverLevel, CallbackInfo callbackInfo, Vec3 vec3, Zombie zombie) {
         if (!LivingSpawnCallback.EVENT.invoker().onLivingSpawn(zombie, serverLevel, vec3.x(), vec3.y(), vec3.z(), MobSpawnType.EVENT)) {
             zombie.discard();
+            // just cancels prematurely
             callbackInfo.cancel();
         }
     }

@@ -1,8 +1,10 @@
 package fuzs.magnumtorch.mixin;
 
+import fuzs.magnumtorch.api.event.player.LivingCheckSpawnCallback;
 import fuzs.magnumtorch.api.event.player.LivingSpawnCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,6 +23,14 @@ public abstract class PatrolSpawnerMixin {
     private void spawnPatrolMember$invokeFinalizeSpawn(ServerLevel serverLevel, BlockPos blockPos, Random random, boolean bl, CallbackInfoReturnable<Boolean> callbackInfo, BlockState blockState, PatrollingMonster patrollingMonster) {
         if (!LivingSpawnCallback.EVENT.invoker().onLivingSpawn(patrollingMonster, serverLevel, blockPos.getX(), blockPos.getY(), blockPos.getZ(), MobSpawnType.PATROL)) {
             patrollingMonster.discard();
+            // return true as we want vanilla to assume spawning was successful either way
+            callbackInfo.setReturnValue(true);
+        }
+    }
+
+    @Inject(method = "spawnPatrolMember", at = @At("HEAD"), cancellable = true)
+    private void spawnPatrolMember$head(ServerLevel serverLevel, BlockPos blockPos, Random random, boolean bl, CallbackInfoReturnable<Boolean> callbackInfo) {
+        if (!LivingCheckSpawnCallback.EVENT.invoker().onLivingSpawn(EntityType.PILLAGER, serverLevel, blockPos.getX(), blockPos.getY(), blockPos.getZ(), MobSpawnType.PATROL)) {
             callbackInfo.setReturnValue(false);
         }
     }
