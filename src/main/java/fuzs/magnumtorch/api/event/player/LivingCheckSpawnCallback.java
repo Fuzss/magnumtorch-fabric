@@ -10,12 +10,12 @@ import net.minecraft.world.level.LevelAccessor;
 public interface LivingCheckSpawnCallback {
     Event<LivingCheckSpawnCallback> EVENT = EventFactory.createArrayBacked(LivingCheckSpawnCallback.class, listeners -> (EntityType<?> entityType, LevelAccessor levelAccessor, double posX, double posY, double posZ, MobSpawnType spawnType) -> {
         for (LivingCheckSpawnCallback event : listeners) {
-            if (!event.onLivingSpawn(entityType, levelAccessor, posX, posY, posZ, spawnType)) {
+            if (!event.onLivingCheckSpawn(entityType, levelAccessor, posX, posY, posZ, spawnType)) {
                 return false;
             }
         }
         return true;
     });
 
-    boolean onLivingSpawn(EntityType<?> entityType, LevelAccessor levelAccessor, double posX, double posY, double posZ, MobSpawnType spawnType);
+    boolean onLivingCheckSpawn(EntityType<?> entityType, LevelAccessor levelAccessor, double posX, double posY, double posZ, MobSpawnType spawnType);
 }

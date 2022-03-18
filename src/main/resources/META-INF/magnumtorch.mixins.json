@@ -7,12 +7,12 @@
   "mixins": [
     "CatSpawnerMixin",
     "EntityTypeMixin",
+    "NaturalSpawnerMixin",
     "PatrolSpawnerMixin",
-    "PhantomSpawnerMixin",
     "RaidMixin",
+    "SpawnPlacementsMixin",
     "VillagerMixin",
-    "VillageSiegeMixin",
-    "ZombieMixin"
+    "VillageSiegeMixin"
   ],
   "client": [
   ],

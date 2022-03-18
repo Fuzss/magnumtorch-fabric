@@ -1,6 +1,6 @@
 package fuzs.magnumtorch;
 
-import fuzs.magnumtorch.api.event.player.LivingSpawnCallback;
+import fuzs.magnumtorch.api.event.player.LivingCheckSpawnCallback;
 import fuzs.magnumtorch.config.ServerConfig;
 import fuzs.magnumtorch.handler.MobSpawningHandler;
 import fuzs.magnumtorch.registry.ModRegistry;
@@ -27,7 +27,7 @@ public class MagnumTorch implements ModInitializer {
 
     private static void registerHandlers() {
         MobSpawningHandler mobSpawningHandler = new MobSpawningHandler();
-        LivingSpawnCallback.EVENT.register(mobSpawningHandler::onCheckSpawn);
+        LivingCheckSpawnCallback.EVENT.register(mobSpawningHandler::onCheckSpawn);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package fuzs.magnumtorch.mixin;
 
-import fuzs.magnumtorch.api.event.player.LivingSpawnCallback;
+import fuzs.magnumtorch.api.event.player.LivingCheckSpawnCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.MobSpawnType;
@@ -20,11 +20,20 @@ public abstract class RaidMixin {
     @Final
     private ServerLevel level;
 
-    @Inject(method = "joinRaid", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/raid/Raider;finalizeSpawn(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/entity/SpawnGroupData;"), cancellable = true)
-    public void joinRaid$invokeFinalizeSpawn(int wave, Raider raider, @Nullable BlockPos blockPos, boolean hasBeenAdded, CallbackInfo callbackInfo) {
-        if (!LivingSpawnCallback.EVENT.invoker().onLivingSpawn(raider, this.level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), MobSpawnType.EVENT)) {
+    @Inject(method = "joinRaid", at = @At("HEAD"), cancellable = true)
+    public void joinRaid$head(int waveCount, Raider raider, @Nullable BlockPos blockPos, boolean hasBeenAdded, CallbackInfo callbackInfo) {
+        if (hasBeenAdded || blockPos == null) return;
+        // handles new raiders being spawned
+        // one problem: removing the leader will not allow a new one to spawn
+        if (!LivingCheckSpawnCallback.EVENT.invoker().onLivingCheckSpawn(raider.getType(), this.level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), MobSpawnType.EVENT)) {
+            if (raider.isPatrolLeader()) {
+                this.removeLeader(waveCount);
+            }
             raider.discard();
             callbackInfo.cancel();
         }
     }
+
+    @Shadow
+    public abstract void removeLeader(int i);
 }

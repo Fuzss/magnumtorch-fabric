@@ -4,8 +4,7 @@ import fuzs.magnumtorch.MagnumTorch;
 import fuzs.magnumtorch.config.ServerConfig;
 import fuzs.magnumtorch.registry.ModRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
@@ -15,28 +14,28 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import java.util.stream.Stream;
 
 public class MobSpawningHandler {
-    public boolean onCheckSpawn(Mob mob, LevelAccessor levelAccessor, double posX, double posY, double posZ, MobSpawnType spawnType) {
+    public boolean onCheckSpawn(EntityType<?> entityType, LevelAccessor levelAccessor, double posX, double posY, double posZ, MobSpawnType spawnType) {
         if (levelAccessor.isClientSide()) return true;
         PoiManager poiManager = ((ServerLevelAccessor) levelAccessor).getLevel().getPoiManager();
         BlockPos pos = new BlockPos(posX, posY, posZ);
-        if (this.isSpawnCancelled(poiManager, mob, pos, spawnType, ModRegistry.DIAMOND_MAGNUM_TORCH_POI_TYPE, MagnumTorch.CONFIG.server().diamond)) {
+        if (this.isSpawnCancelled(poiManager, entityType, pos, spawnType, ModRegistry.DIAMOND_MAGNUM_TORCH_POI_TYPE, MagnumTorch.CONFIG.server().diamond)) {
             return false;
-        } else if (this.isSpawnCancelled(poiManager, mob, pos, spawnType, ModRegistry.EMERALD_MAGNUM_TORCH_POI_TYPE, MagnumTorch.CONFIG.server().emerald)) {
+        } else if (this.isSpawnCancelled(poiManager, entityType, pos, spawnType, ModRegistry.EMERALD_MAGNUM_TORCH_POI_TYPE, MagnumTorch.CONFIG.server().emerald)) {
             return false;
-        } else if (this.isSpawnCancelled(poiManager, mob, pos, spawnType, ModRegistry.AMETHYST_MAGNUM_TORCH_POI_TYPE, MagnumTorch.CONFIG.server().amethyst)) {
+        } else if (this.isSpawnCancelled(poiManager, entityType, pos, spawnType, ModRegistry.AMETHYST_MAGNUM_TORCH_POI_TYPE, MagnumTorch.CONFIG.server().amethyst)) {
             return false;
         }
         return true;
     }
 
-    private boolean isSpawnCancelled(PoiManager poiManager, LivingEntity entity, BlockPos pos, MobSpawnType spawnType, PoiType poiType, ServerConfig.TorchConfig config) {
-        return config.blockedSpawnTypes.contains(spawnType) && this.isAffected(entity, config) && this.anyInRange(poiManager, poiType, pos, config);
+    private boolean isSpawnCancelled(PoiManager poiManager, EntityType<?> entityType, BlockPos pos, MobSpawnType spawnType, PoiType poiType, ServerConfig.TorchConfig config) {
+        return config.blockedSpawnTypes.contains(spawnType) && this.isAffected(entityType, config) && this.anyInRange(poiManager, poiType, pos, config);
     }
 
-    private boolean isAffected(LivingEntity entity, ServerConfig.TorchConfig config) {
-        if (config.mobWhitelist.contains(entity.getType())) return false;
-        if (config.mobCategories.contains(entity.getType().getCategory())) return true;
-        return config.mobBlacklist.contains(entity.getType());
+    private boolean isAffected(EntityType<?> entityType, ServerConfig.TorchConfig config) {
+        if (config.mobWhitelist.contains(entityType)) return false;
+        if (config.mobCategories.contains(entityType.getCategory())) return true;
+        return config.mobBlacklist.contains(entityType);
     }
 
     private boolean anyInRange(PoiManager poiManager, PoiType poiType, BlockPos pos, ServerConfig.TorchConfig config) {
